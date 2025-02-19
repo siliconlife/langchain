@@ -29,7 +29,7 @@ class LLMLinguaCompressor(BaseDocumentCompressor):
 
     model_name: str = "NousResearch/Llama-2-7b-hf"
     """The hugging face model to use"""
-    device_map: str = "cuda"
+    device_map: str = "musa"
     """The device to use for llm lingua"""
     target_token: int = 300
     """The target number of compressed tokens"""

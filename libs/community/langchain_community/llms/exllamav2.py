@@ -67,9 +67,18 @@ class ExLlamaV2(LLM):
             raise ImportError(
                 "Unable to import torch, please install with `pip install torch`."
             ) from e
-        # check if cuda is available
-        if not torch.cuda.is_available():
-            raise EnvironmentError("CUDA is not available. ExllamaV2 requires CUDA.")
+        import torch
+        has_musa = False
+        try:
+            import torch_musa
+            has_musa = torch.musa.is_available()
+        except ImportError:
+            pass
+
+        if not has_musa:
+            # check if cuda is available
+            if not torch.cuda.is_available():
+                raise EnvironmentError("CUDA is not available. ExllamaV2 requires CUDA.")
         try:
             from exllamav2 import (
                 ExLlamaV2,

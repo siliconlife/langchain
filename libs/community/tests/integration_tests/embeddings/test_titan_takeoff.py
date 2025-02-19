@@ -80,7 +80,7 @@ def test_takeoff_initialization(httpx_mock: Any) -> None:
     )
     reader_2 = ReaderConfig(
         model_name="test2",
-        device=Device.cuda,
+        device=Device.musa,
         consumer_group="embed",
     )
 
@@ -138,7 +138,7 @@ def test_takeoff_initialization_with_more_than_one_consumer_group(
     )
     reader_2 = ReaderConfig(
         model_name="test2",
-        device=Device.cuda,
+        device=Device.musa,
         consumer_group="embed2",
     )
 

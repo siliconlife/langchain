@@ -404,19 +404,28 @@ class OpenAIWhisperParserLocal(BaseBlobParser):
             raise ImportError(
                 "torch package not found, please install it with `pip install torch`"
             )
+        has_musa = False
+        try:
+            import torch_musa
+            has_musa = torch.musa.is_available()
+        except ImportError:
+            pass
 
         # Determine the device to use
         if device == "cpu":
             self.device = "cpu"
         else:
-            self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
+            self.device = 'musa:0' if has_musa else "cuda:0" if torch.cuda.is_available() else "cpu"
 
         if self.device == "cpu":
             default_model = "openai/whisper-base"
             self.lang_model = lang_model if lang_model else default_model
         else:
             # Set the language model based on the device and available memory
-            mem = torch.cuda.get_device_properties(self.device).total_memory / (1024**2)
+            if has_musa:
+                mem = torch.musa.get_device_properties(self.device).total_memory / (1024**2)
+            else:
+                mem = torch.cuda.get_device_properties(self.device).total_memory / (1024**2)
             if mem < 5000:
                 rec_model = "openai/whisper-base"
             elif mem < 7000:
@@ -600,13 +609,13 @@ class FasterWhisperParser(BaseBlobParser):
     def __init__(
         self,
         *,
-        device: Optional[str] = "cuda",
+        device: Optional[str] = "musa",
         model_size: Optional[str] = None,
     ):
         """Initialize the parser.
 
         Args:
-            device: It can be "cuda" or "cpu" based on the available device.
+            device: It can be "musa" or "cuda" or "cpu" based on the available device.
             model_size: There are four model sizes to choose from: "base", "small",
                         "medium", and "large-v3", based on the available GPU memory.
         """
@@ -616,19 +625,28 @@ class FasterWhisperParser(BaseBlobParser):
             raise ImportError(
                 "torch package not found, please install it with `pip install torch`"
             )
+        has_musa = False
+        try:
+            import torch_musa
+            has_musa = torch.musa.is_available()
+        except ImportError:
+            pass
 
         # Determine the device to use
         if device == "cpu":
             self.device = "cpu"
         else:
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+            self.device = 'musa' if has_musa else "cuda" if torch.cuda.is_available() else "cpu"
 
         # Determine the model_size
         if self.device == "cpu":
             self.model_size = "base"
         else:
             # Set the model_size based on the available memory
-            mem = torch.cuda.get_device_properties(self.device).total_memory / (1024**2)
+            if has_musa:
+                mem = torch.musa.get_device_properties(self.device).total_memory / (1024**2)
+            else:
+                mem = torch.cuda.get_device_properties(self.device).total_memory / (1024**2)
             if mem < 1000:
                 self.model_size = "base"
             elif mem < 3000:

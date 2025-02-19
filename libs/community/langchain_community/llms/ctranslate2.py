@@ -17,7 +17,7 @@ class CTranslate2(BaseLLM):
     """Name of the original Hugging Face model needed to load the proper tokenizer."""
 
     device: str = "cpu"
-    """Device to use (possible values are: cpu, cuda, auto)."""
+    """Device to use (possible values are: cpu, cuda, musa, auto)."""
 
     device_index: Union[int, List[int]] = 0
     """Device IDs where to place this generator on."""
@@ -47,7 +47,7 @@ class CTranslate2(BaseLLM):
 
     ctranslate2_kwargs: Dict[str, Any] = Field(default_factory=dict)
     """
-    Holds any model parameters valid for `ctranslate2.Generator` call not 
+    Holds any model parameters valid for `ctranslate2.Generator` call not
     explicitly specified.
     """
 

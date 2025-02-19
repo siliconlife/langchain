@@ -42,20 +42,28 @@ def _send_pipeline_to_device(pipeline: Any, device: int) -> Any:
 
     if importlib.util.find_spec("torch") is not None:
         import torch
-
-        cuda_device_count = torch.cuda.device_count()
-        if device < -1 or (device >= cuda_device_count):
+        has_musa = False
+        try:
+            import torch_musa
+            has_musa = torch.musa.is_available()
+        except ImportError:
+            pass
+        if has_musa:
+                device_count = torch.musa.device_count()
+        else:
+            device_count = torch.cuda.device_count()
+        if device < -1 or (device >= device_count):
             raise ValueError(
                 f"Got device=={device}, "
-                f"device is required to be within [-1, {cuda_device_count})"
+                f"device is required to be within [-1, {device_count})"
             )
-        if device < 0 and cuda_device_count > 0:
+        if device < 0 and device_count > 0:
             logger.warning(
                 "Device has %d GPUs available. "
                 "Provide device={deviceId} to `from_model_id` to use available"
                 "GPUs for execution. deviceId is -1 for CPU and "
                 "can be a positive integer associated with CUDA device id.",
-                cuda_device_count,
+                device_count,
             )
 
         pipeline.device = torch.device(device)
@@ -140,7 +148,7 @@ class SelfHostedPipeline(LLM):
     """Requirements to install on hardware to inference the model."""
 
     allow_dangerous_deserialization: bool = False
-    """Allow deserialization using pickle which can be dangerous if 
+    """Allow deserialization using pickle which can be dangerous if
     loading compromised data.
     """
 

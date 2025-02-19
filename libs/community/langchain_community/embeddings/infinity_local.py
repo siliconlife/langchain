@@ -44,11 +44,11 @@ class InfinityEmbeddingsLocal(BaseModel, Embeddings):
     batch_size: int = 32
     "Internal batch size for inference, e.g. 32"
 
-    device: str = "auto"
-    "Device to use for inference, e.g. 'cpu' or 'cuda', or 'mps'"
+    device: str = "musa"
+    "Device to use for inference, e.g. 'cpu' or 'musa' or 'cuda', or 'mps'"
 
     backend: str = "torch"
-    "Backend for inference, e.g. 'torch' (recommended for ROCm/Nvidia)"
+    "Backend for inference, e.g. 'torch' (recommended for MThreads/ROCm/Nvidia)"
     " or 'optimum' for onnx/tensorrt"
 
     model_warmup: bool = True

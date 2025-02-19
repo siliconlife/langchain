@@ -414,7 +414,7 @@ class Marqo(VectorStore):
             metadatas (Optional[List[dict]], optional): A list of metadatas, to
             accompany the texts. Defaults to None.
             this is only used when a new index is being created. Defaults to "cpu". Can
-            be "cpu" or "cuda".
+            be "cpu" or "cuda" or "musa".
             add_documents_settings (Optional[Dict[str, Any]], optional): Settings
             for adding documents, see
             https://docs.marqo.ai/0.0.16/API-Reference/documents/#query-parameters.

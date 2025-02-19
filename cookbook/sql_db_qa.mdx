@@ -649,12 +649,19 @@ import torch
 from transformers import AutoTokenizer, GPT2TokenizerFast, pipeline, AutoModelForSeq2SeqLM, AutoModelForCausalLM
 from langchain_huggingface import HuggingFacePipeline
 
+has_musa = False
+try:
+    import torch_musa
+    has_musa = torch.musa.is_available()
+except ImportError:
+    pass
+
 # Note: This model requires a large GPU, e.g. an 80GB A100. See documentation for other ways to run private non-OpenAI models.
 model_id = "google/flan-ul2"
 model = AutoModelForSeq2SeqLM.from_pretrained(model_id, temperature=0)
 
 device_id = -1  # default to no-GPU, but use GPU and half precision mode if available
-if torch.cuda.is_available():
+if has_musa or torch.cuda.is_available():
     device_id = 0
     try:
         model = model.half()

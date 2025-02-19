@@ -16,7 +16,7 @@ class MissingConsumerGroup(TakeoffEmbeddingException):
 
 class Device(str, Enum):
     """Device to use for inference, cuda or cpu."""
-
+    musa = "musa"
     cuda = "cuda"
     cpu = "cpu"
 
@@ -31,8 +31,8 @@ class ReaderConfig(BaseModel):
     model_name: str
     """The name of the model to use"""
 
-    device: Device = Device.cuda
-    """The device to use for inference, cuda or cpu"""
+    device: Device = Device.musa
+    """The device to use for inference, musa, cuda or cpu"""
 
     consumer_group: str = "primary"
     """The consumer group to place the reader into"""
